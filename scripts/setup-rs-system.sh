@@ -5,17 +5,18 @@ export SECRET_NAME=gcr-rs-dev-workshop-github
 export GITHUB_USER=JinLi97
 export ACCESS_TOKEN=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
 export APP_CONF_REPO=recommender-system-dev-workshop-code
+echo "APP_CONF_REPO: $APP_CONF_REPO"
 
 input=$1
 
-if [ $input = "online-codebuild" ]
-then
-    echo "start create online codebuild project!"
-    ./online-code-build-setup.sh
-elif [ $input = "deploy-offline" ]
+if [ $input = "deploy-offline"  ]
 then
     echo "start create offline codebuild project!"
-    ./create-offline.sh    
+    ./create-offline.sh
+elif [ $input = "online-codebuild" ]
+then
+     echo "start create online codebuild project!"
+    ./online-code-build-setup.sh
 elif [ $input = "infra" ]
 then
     echo "start create online infrastructure!"

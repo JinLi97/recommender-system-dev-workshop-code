@@ -37,7 +37,8 @@ echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
 BUCKET=aws-gcr-rs-sol-$Stage-${REGION}-${AWS_ACCOUNT_ID}
 S3Prefix=sample-data-news
 
-PARAMETER_OVERRIDES="Bucket=$BUCKET S3Prefix=$S3Prefix Stage=$Stage"
+NamePrefix=rs-news-customize-$Stage
+PARAMETER_OVERRIDES="Stage=$Stage NamePrefix=${NamePrefix} Bucket=$BUCKET S3Prefix=$S3Prefix"
 echo PARAMETER_OVERRIDES:$PARAMETER_OVERRIDES
 
 all_stepfuncs=(
@@ -54,24 +55,25 @@ overall
 for name in ${all_stepfuncs[@]};
 do
 
-    STACK_NAME=rs-$Stage-news-${name}-stack
+    STACK_NAME=${NamePrefix}-${name}-stack
     template_file=${name}-template.yaml
     echo "----"
     echo "STACK_NAME: ${STACK_NAME}"
     echo "template_file: ${template_file}"
-    if [[ $name =~ ^(steps|item-new-assembled)$ && $REGION =~ ^cn.* ]]; then
-      org_template_file=${template_file}
-      sed 's#.amazonaws.com#.amazonaws.com.cn#g' ${template_file} > tmp_1_${org_template_file}
-      sed 's#522244679887.dkr.ecr.ap-northeast-1#'${AWS_ACCOUNT_ID}'.dkr.ecr.'${REGION}'#g' tmp_1_${org_template_file}  > tmp_2_${org_template_file}
-      template_file=tmp_2_${org_template_file}
-      echo "changed template_file: ${template_file}"
-    fi
 
-    if [[ $name =~ ^(steps)$ && ! ($REGION =~ ^(ap-northeast-1|cn.*)$) ]]; then
-        org_template_file_2=$template_file
-        sed 's#522244679887.dkr.ecr.ap-northeast-1#'${AWS_ACCOUNT_ID}'.dkr.ecr.'${REGION}'#g' ${org_template_file_2}  > tmp_3_${org_template_file_2}
-        template_file=tmp_3_${org_template_file_2}
-    fi
+#    if [[ $name =~ ^(steps|item-new-assembled)$ && $REGION =~ ^cn.* ]]; then
+#      org_template_file=${template_file}
+#     # sed 's#.amazonaws.com#.amazonaws.com.cn#g' ${template_file} > tmp_1_${org_template_file}
+#      sed 's#522244679887.dkr.ecr.ap-northeast-1#'${AWS_ACCOUNT_ID}'.dkr.ecr.'${REGION}'#g' tmp_1_${org_template_file}  > tmp_2_${org_template_file}
+#      template_file=tmp_2_${org_template_file}
+#      echo "changed template_file: ${template_file}"
+#    fi
+
+#    if [[ $name =~ ^(steps)$ && ! ($REGION =~ ^(ap-northeast-1|cn.*)$) ]]; then
+#        org_template_file_2=$template_file
+#        sed 's#522244679887.dkr.ecr.ap-northeast-1#'${AWS_ACCOUNT_ID}'.dkr.ecr.'${REGION}'#g' ${org_template_file_2}  > tmp_3_${org_template_file_2}
+#        template_file=tmp_3_${org_template_file_2}
+#    fi
 
     $AWS_CMD  cloudformation deploy --region ${REGION} \
     --template-file ${template_file} --stack-name ${STACK_NAME} \
