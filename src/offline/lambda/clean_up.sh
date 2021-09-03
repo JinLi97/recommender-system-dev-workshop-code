@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -e
+set -e
 
 echo "run $0 ..."
 pwd
@@ -7,7 +7,7 @@ pwd
 echo "------------------------------------------------ "
 Stage=$1
 if [[ -z $Stage ]];then
-  Stage='dev-workshop'
+  Stage='dev'
 fi
 
 echo "Stage=$Stage"
@@ -23,7 +23,7 @@ if [[ -n $AWS_DEFAULT_REGION ]];then
 fi
 
 if [[ -z $REGION ]]; then
-  REGION='ap-northeast-1'
+  REGION='ap-southeast-1'
 fi
 
 echo "AWS_CMD: $AWS_CMD"
@@ -49,5 +49,4 @@ do
     $AWS_CMD cloudformation delete-stack --region ${REGION} --stack-name ${STACK_NAME}
 done
 
-$AWS_CMD s3 rm s3://${BUCKET}/${S3Prefix}/code/lambda/ --recursive >/dev/null 2>&1
-
+$AWS_CMD s3 rm s3://${BUCKET}/${S3Prefix}/code/lambda/ --recursive

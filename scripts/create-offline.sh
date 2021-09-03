@@ -38,9 +38,9 @@ echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
 
 sleep 3
 
-# echo "1. ========= Create codebuild =============="
-# cd ${curr_dir}/codebuild
-# ./register-to-codebuild-offline-ps.sh $Stage
+echo "1. ========= Create codebuild =============="
+cd ${curr_dir}/codebuild
+./register-to-codebuild-offline-ps.sh $Stage
 
 # if [[ $REGION=～ ^cn.* ]];then
 #   OLD_PROFILE=$PROFILE
@@ -71,31 +71,31 @@ sleep 3
 # cd ${curr_dir}/../src/offline/lambda
 # ./build.sh $Stage
 
-echo "4. ========= Build stepfuncs =============="
-method_list=(
-  "customize"
-  "ps-complete"
-  "ps-rank"
-  "ps-sims"
-)
-for method in ${method_list[@]}; do
-  step_funcs_path=${curr_dir}/../src/offline/news/${method}/step-funcs
-  if [[ -d ${step_funcs_path} ]];then
-    echo "build ${method} step functions ......"
-    cd ${curr_dir}/../src/offline/news/step-funcs
-    ./build.sh $Stage
-  fi
-done
+# echo "4. ========= Build stepfuncs =============="
+# method_list=(
+#   "customize"
+#   "ps-complete"
+#   "ps-rank"
+#   "ps-sims"
+# )
+# for method in ${method_list[@]}; do
+#   step_funcs_path=${curr_dir}/../src/offline/news/${method}/step-funcs
+#   if [[ -d ${step_funcs_path} ]];then
+#     echo "build ${method} step functions ......"
+#     cd ${curr_dir}/../src/offline/news/step-funcs
+#     ./build.sh $Stage
+#   fi
+# done
 
-echo "Offline resources are created successfully"
-echo "You can run your step-funcs with below input"
+# echo "Offline resources are created successfully"
+# echo "You can run your step-funcs with below input"
 
-echo '{
-  "Bucket": "aws-gcr-rs-sol-'${Stage}'-'${REGION}'-'${AWS_ACCOUNT_ID}'",
-  "S3Prefix": "sample-data-news",
-  "change_type": "ITEM|BATCH|USER|MODEL"
-}'
-echo ""
+# echo '{
+#   "Bucket": "aws-gcr-rs-sol-'${Stage}'-'${REGION}'-'${AWS_ACCOUNT_ID}'",
+#   "S3Prefix": "sample-data-news",
+#   "change_type": "ITEM|BATCH|USER|MODEL"
+# }'
+# echo ""
 
 # if [[ $REGION=～ ^cn.* ]]; then
 #   export REGION=$OLD_REGION

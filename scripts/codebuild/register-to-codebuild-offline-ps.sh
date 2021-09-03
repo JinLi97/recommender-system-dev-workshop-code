@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #set -e
 # export PROFILE=rsops
-echo "------------------------------------------------ "
+cur_dir=$(pwd)
+
 Stage=$1
 if [[ -z $Stage ]];then
   Stage='dev-workshop'
@@ -167,8 +168,8 @@ projects_dir=(
 )
 
 method_list=(
-  "customize"
-  "ps-complete"
+  # "customize"
+  # "ps-complete"
 #  "ps-rank"
 #  "ps-sims"
 )
@@ -181,12 +182,14 @@ for method in ${method_list[@]}; do
     #   build_proj_name="rs-$Stage-offline-${build_name}-$CN_REGION-build"
     # fi
     app_path="news/${method}/${project}"
-    if [[ -d ${app_path} ]];then
+    if [[ -d "${cur_dir}/../../src/offline/${app_path}" ]];then
       if [[ $DELETE_FLAG == 'DELETE' ]];then
           delete_codebuild_project $build_proj_name $app_path
       else
           create_codebuild_project $build_proj_name $app_path
       fi
+    else
+      echo "dir_path doesn't exist."
     fi
   done
 done

@@ -6,10 +6,16 @@ pwd
 
 Stage=$1
 if [[ -z $Stage ]];then
-  Stage='dev-workshop'
+  Stage='dev'
+fi
+
+METHOD=$2
+if [[ -z $METHOD ]];then
+  METHOD='ps-sims'
 fi
 
 echo "Stage=$Stage"
+echo "METHOD=$METHOD"
 
 AWS_CMD="aws"
 if [[ -n $PROFILE ]]; then
@@ -21,7 +27,7 @@ if [[ -n $AWS_DEFAULT_REGION ]];then
 fi
 
 if [[ -z $REGION ]]; then
-  REGION='ap-northeast-1'
+  REGION='ap-southeast-1'
 fi
 
 echo "AWS_CMD: $AWS_CMD"
@@ -37,17 +43,17 @@ fi
 
 echo "AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID"
 
-./package_code_to_s3.sh $Stage
+./package_code_to_s3.sh $Stage $METHOD
 if [[ $? -ne 0 ]]; then
     echo "error!!!"
     exit 1
 fi
-./deploy_lambda.sh $Stage
+./deploy_lambda.sh $Stage $METHOD
 if [[ $? -ne 0 ]]; then
     echo "error!!!"
     exit 1
 fi
-./update_lambda_code.sh $Stage
+./update_lambda_code.sh $Stage $METHOD
 if [[ $? -ne 0 ]]; then
     echo "error!!!"
     exit 1

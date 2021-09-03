@@ -54,7 +54,11 @@ Parameters:
 Mappings:
   LoaderConfigMap:
     NewsOnlineLoaderURL:
-      devworkshop: ''
+      dev: adf45c54cf8734c0f9c14f4adfecae86-234454018.ap-southeast-1.elb.amazonaws.com
+      demo: a08ee0a80c43b4cf8af229bf3c70c995-1967456171.ap-southeast-1.elb.amazonaws.com
+    MovieOnlineLoaderURL:
+      dev: a4fb68ded64b0495f90bbaa36c7773cd-1545468192.ap-southeast-1.elb.amazonaws.com
+      demo: a30667949998643caa071da69f042c8f-448313425.ap-southeast-1.elb.amazonaws.com
 
 Resources:
   RSOfflineSNS:
@@ -95,5 +99,6 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          SNS_TOPIC_ARN: !Ref RSOfflineSNS
-          NEWS_ONLINE_LOADER_URL: !FindInMap [ LoaderConfigMap, NewsOnlineLoaderURL, 'devworkshop' ]
+          SNS_TOPIC_ARN: !Sub arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:rs-${Stage}-offline-sns
+          NEWS_ONLINE_LOADER_URL: !FindInMap [ LoaderConfigMap, NewsOnlineLoaderURL, !Ref Stage ]
+          MOVIE_ONLINE_LOADER_URL: !FindInMap [ LoaderConfigMap, MovieOnlineLoaderURL, !Ref Stage ]

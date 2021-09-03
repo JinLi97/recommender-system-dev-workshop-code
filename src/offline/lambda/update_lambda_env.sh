@@ -4,7 +4,7 @@ set -e
 echo "------------------------------------------------ "
 Stage=$1
 if [[ -z $Stage ]];then
-  Stage='dev-workshop'
+  Stage='dev'
 fi
 
 echo "Stage=$Stage"
@@ -18,7 +18,7 @@ if [[ -n $AWS_DEFAULT_REGION ]];then
 fi
 
 if [[ -z $REGION ]]; then
-  REGION='ap-northeast-1'
+  REGION='ap-southeast-1'
 fi
 
 echo "AWS_CMD: $AWS_CMD"
@@ -36,7 +36,7 @@ ingressgateway_elb=''
 for elb in ${elb_names[@]};
 do
   echo "check elb $elb ..."
-  $AWS_CMD elb describe-tags --load-balancer-name $elb --output text  | grep 'istio-ingressgateway-news-dev'
+  $AWS_CMD elb describe-tags --load-balancer-name $elb --output text  | grep 'istio-ingressgateway'
   if [[ $? -eq '0' ]];then
      echo "find ingressgateway $elb"
      ingressgateway_elb=$elb
