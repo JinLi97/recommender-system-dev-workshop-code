@@ -38,42 +38,54 @@ echo "AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}"
 
 sleep 3
 
-echo "1. ========= Create codebuild =============="
-cd ${curr_dir}/codebuild
-./register-to-codebuild-offline.sh $Stage
+# echo "1. ========= Create codebuild =============="
+# cd ${curr_dir}/codebuild
+# ./register-to-codebuild-offline-ps.sh $Stage
 
-if [[ $REGION=～ ^cn.* ]];then
-  OLD_PROFILE=$PROFILE
-  export PROFILE=$REGION=～ ^cn.*
-  CN_REGION=$(aws --profile $REGION=～ ^cn.* configure get region)
-  if [[ -z $CN_REGION ]]; then
-    CN_REGION='cn-north-1'
-  fi
-  OLD_REGION=$REGION
-  export REGION=$CN_REGION
+# if [[ $REGION=～ ^cn.* ]];then
+#   OLD_PROFILE=$PROFILE
+#   export PROFILE=$REGION=～ ^cn.*
+#   CN_REGION=$(aws --profile $REGION=～ ^cn.* configure get region)
+#   if [[ -z $CN_REGION ]]; then
+#     CN_REGION='cn-north-1'
+#   fi
+#   OLD_REGION=$REGION
+#   export REGION=$CN_REGION
 
-  AWS_CMD="aws --profile $PROFILE"
-  AWS_ACCOUNT_ID=$($AWS_CMD sts get-caller-identity --region ${CN_REGION} --query Account --output text)
+#   AWS_CMD="aws --profile $PROFILE"
+#   AWS_ACCOUNT_ID=$($AWS_CMD sts get-caller-identity --region ${CN_REGION} --query Account --output text)
 
-  echo "--------------$REGION-------------------------"
-  echo "change PROFILE to $PROFILE"
-  echo "change AWS_ACCOUNT_ID to $AWS_ACCOUNT_ID"
-  echo "change REGION to $REGION"
-  sleep 5
-fi
+#   echo "--------------$REGION-------------------------"
+#   echo "change PROFILE to $PROFILE"
+#   echo "change AWS_ACCOUNT_ID to $AWS_ACCOUNT_ID"
+#   echo "change REGION to $REGION"
+#   sleep 5
+# fi
 
-echo "2. ========= sync sample data to S3 =============="
-cd ${curr_dir}/../sample-data
-./sync_data_to_s3.sh $Stage
+# echo "2. ========= sync sample data to S3 =============="
+# cd ${curr_dir}/../sample-data
+# ./sync_data_to_s3.sh $Stage
 
 
-echo "3. ========= Build lambda =============="
-cd ${curr_dir}/../src/offline/lambda
-./build.sh $Stage
+# echo "3. ========= Build lambda =============="
+# cd ${curr_dir}/../src/offline/lambda
+# ./build.sh $Stage
 
 echo "4. ========= Build stepfuncs =============="
-cd ${curr_dir}/../src/offline/news/step-funcs
-./build.sh $Stage
+method_list=(
+  "customize"
+  "ps-complete"
+  "ps-rank"
+  "ps-sims"
+)
+for method in ${method_list[@]}; do
+  step_funcs_path=${curr_dir}/../src/offline/news/${method}/step-funcs
+  if [[ -d ${step_funcs_path} ]];then
+    echo "build ${method} step functions ......"
+    cd ${curr_dir}/../src/offline/news/step-funcs
+    ./build.sh $Stage
+  fi
+done
 
 echo "Offline resources are created successfully"
 echo "You can run your step-funcs with below input"
@@ -85,9 +97,9 @@ echo '{
 }'
 echo ""
 
-if [[ $REGION=～ ^cn.* ]]; then
-  export REGION=$OLD_REGION
-  export PROFILE=$OLD_PROFILE
-fi
+# if [[ $REGION=～ ^cn.* ]]; then
+#   export REGION=$OLD_REGION
+#   export PROFILE=$OLD_PROFILE
+# fi
 
 
