@@ -168,8 +168,8 @@ projects_dir=(
 )
 
 method_list=(
-  # "customize"
-  # "ps-complete"
+  "customize"
+  "ps-complete"
 #  "ps-rank"
 #  "ps-sims"
 )

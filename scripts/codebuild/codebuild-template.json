@@ -11,7 +11,7 @@
         "reportBuildStatus": false,
         "insecureSsl": false
     },
-    "sourceVersion": "main",
+    "sourceVersion": "develop",
     "artifacts": {
         "type": "NO_ARTIFACTS"
     },
